@@ -2,10 +2,11 @@ package com.scholanova.ecommerce.order.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.scholanova.ecommerce.cart.entity.Cart;
-import com.sun.xml.bind.v2.TODO;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 
 @Entity(name="orders")
 public class Orders {
@@ -31,24 +32,35 @@ public class Orders {
     public Orders() {
     }
 
-    public void createOrder(){
+    public void createOrder(Cart cart){
         //TODO
+
+        this.setCart(cart);
+        this.setStatus(OrderStatus.CREATED);
     }
 
     public void checkout(){
-        //TODO
+        this.issueDate = new Date(Instant.now().toEpochMilli());
+        this.status = OrderStatus.PENDING;
     }
 
-    public void getDiscount(){
+    public BigDecimal getDiscount(){
         //TODO
+        return cart.getTotalPrice();
+
     }
 
-    public void getOrderPrice(){
+    public double getOrderPrice(){
         //TODO
+        double totalPrice = this.getCart().getTotalPrice().doubleValue();
+        double discount = this.getCart().getTotalPrice() * getDiscount();
+        return totalPrice - discount;
     }
 
     public void close(){
         //TODO
+        setStatus(OrderStatus.CLOSED);
+
     }
 
 
